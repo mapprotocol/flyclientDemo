@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="84ebfe18-8146-4189-97f7-841ff7bc14e2" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" path="/usr/lib/go-1.13" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
+  </component>
+  <component name="ProjectId" id="1btMKwyB4ndwbC82yTZ191Yo29A" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager" selected="Go Test.TestMarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil">
+    <configuration name="BenchmarkUnmarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="flyclientDemo" />
+      <working_directory value="$PROJECT_DIR$/common/hexutil" />
+      <framework value="gobench" />
+      <kind value="PACKAGE" />
+      <package value="github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
+      <pattern value="^BenchmarkUnmarshalBytes$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestHash_Func in github.com/marcopoloprotocol/flyclientDemo/common" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="flyclientDemo" />
+      <working_directory value="$PROJECT_DIR$/common" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/marcopoloprotocol/flyclientDemo/common" />
+      <pattern value="^TestHash_Func$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestMarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="flyclientDemo" />
+      <working_directory value="$PROJECT_DIR$/common/hexutil" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
+      <pattern value="^TestMarshalBytes$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUnmarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="flyclientDemo" />
+      <working_directory value="$PROJECT_DIR$/common/hexutil" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
+      <pattern value="^TestUnmarshalBytes$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestMarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
+        <item itemvalue="Go Test.BenchmarkUnmarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
+        <item itemvalue="Go Test.TestUnmarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
+        <item itemvalue="Go Test.TestHash_Func in github.com/marcopoloprotocol/flyclientDemo/common" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>true</integration-enabled>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="649" y="156" width="679" height="793" key="#BenchmarkUnmarshalBytes_in_github.com/marcopoloprotocol/flyclientDemo/common/hexutil" timestamp="1589447959847">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="649" y="156" width="679" height="793" key="#BenchmarkUnmarshalBytes_in_github.com/marcopoloprotocol/flyclientDemo/common/hexutil/67.27.1853.1053@67.27.1853.1053" timestamp="1589447959847" />
+    <state x="788" y="389" width="400" height="327" key="#Go_Modules" timestamp="1589447644827">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="788" y="389" width="400" height="327" key="#Go_Modules/67.27.1853.1053@67.27.1853.1053" timestamp="1589447644827" />
+    <state x="649" y="156" width="679" height="793" key="#TestMarshalBytes_in_github.com/marcopoloprotocol/flyclientDemo/common/hexutil" timestamp="1589447966655">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="649" y="156" width="679" height="793" key="#TestMarshalBytes_in_github.com/marcopoloprotocol/flyclientDemo/common/hexutil/67.27.1853.1053@67.27.1853.1053" timestamp="1589447966655" />
+    <state x="649" y="156" width="679" height="793" key="#TestUnmarshalBytes_in_github.com/marcopoloprotocol/flyclientDemo/common/hexutil" timestamp="1589447955349">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="649" y="156" width="679" height="793" key="#TestUnmarshalBytes_in_github.com/marcopoloprotocol/flyclientDemo/common/hexutil/67.27.1853.1053@67.27.1853.1053" timestamp="1589447955349" />
+    <state x="67" y="213" width="1843" height="679" key="FileDocumentManager.FileCacheConflict" timestamp="1589447735592">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="67" y="213" width="1843" height="679" key="FileDocumentManager.FileCacheConflict/67.27.1853.1053@67.27.1853.1053" timestamp="1589447735592" />
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom" timestamp="1589447970471">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1589447970471" />
+    <state width="1807" height="278" key="GridCell.Tab.0.center" timestamp="1589447970470">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="278" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1589447970470" />
+    <state width="1807" height="278" key="GridCell.Tab.0.left" timestamp="1589447970470">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="278" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1589447970470" />
+    <state width="1807" height="278" key="GridCell.Tab.0.right" timestamp="1589447970471">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state width="1807" height="278" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1589447970471" />
+    <state x="684" y="291" width="618" height="522" key="find.popup" timestamp="1589447543018">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="684" y="291" width="618" height="522" key="find.popup/67.27.1853.1053@67.27.1853.1053" timestamp="1589447543018" />
+  </component>
+</project>

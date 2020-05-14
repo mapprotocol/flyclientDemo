@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"github.com/dchest/siphash"
 	"github.com/marcopoloprotocol/flyclientDemo/common"
 	"github.com/marcopoloprotocol/flyclientDemo/common/hexutil"
 	"math/big"
-	"github.com/dchest/siphash"
 )
 
 // Predefined constants

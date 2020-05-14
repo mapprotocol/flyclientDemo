@@ -165,67 +165,6 @@ type proofRes struct {
 	h  common.Hash
 	td *big.Int
 }
-type SingleMerkleProof struct {
-	MmrSize uint64
-	proofs  []*proofRes
-	node    *proofRes
-	nodePos uint64
-}
-
-func newSingleMerkleProof(MmrSize uint64, proof []*proofRes, node *proofRes, pos uint64) *SingleMerkleProof {
-	return &SingleMerkleProof{
-		MmrSize: MmrSize,
-		proofs:  proof,
-		node:    node,
-		nodePos: pos,
-	}
-}
-
-func (m *SingleMerkleProof) verify(root common.Hash, rTD *big.Int) bool {
-	pos, leafHash, leafTD := m.nodePos, m.node.h, new(big.Int).Set(m.node.td)
-	peaks := get_peaks(m.MmrSize)
-	height := 0
-	for _, proof := range m.proofs {
-		// verify bagging peaks
-		if pos_in_peaks(pos, peaks) {
-			if pos == peaks[len(peaks)-1] {
-				leafHash = merge2(leafHash, proof.h)
-			} else {
-				leafHash = merge2(proof.h, leafHash)
-				pos = peaks[len(peaks)-1]
-			}
-			leafTD = new(big.Int).Add(leafTD, proof.td)
-			continue
-		}
-		// verify merkle path
-		posHeight, nextHeight := pos_height_in_tree(pos), pos_height_in_tree(pos+1)
-		if nextHeight > posHeight {
-			// we are in right child
-			leafHash = merge2(proof.h, leafHash)
-			pos += 1
-		} else {
-			leafHash = merge2(leafHash, proof.h)
-			pos += parent_offset(height)
-		}
-		leafTD = new(big.Int).Add(leafTD, proof.td)
-		height += 1
-	}
-	return equal_hash(leafHash, root) && 0 == rTD.Cmp(leafTD)
-}
-
-type Proof3 struct {
-	rootHash common.Hash
-	rootTD   *big.Int
-	proofs   []*SingleMerkleProof
-}
-
-func newProof3(root common.Hash, td *big.Int, proofs []*SingleMerkleProof) *Proof3 {
-	return &Proof3{
-		rootHash: root,
-		rootTD:   new(big.Int).Set(td),
-		proofs:   proofs,
-	}
-}
 
 type Mmr struct {
 	Values  []*Node

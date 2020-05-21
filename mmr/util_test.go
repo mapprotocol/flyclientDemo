@@ -2,10 +2,11 @@ package mmr
 
 import (
 	"fmt"
-	"github.com/marcopoloprotocol/flyclientDemo/common"
 	"math"
 	"math/big"
 	"testing"
+
+	"github.com/marcopoloprotocol/flyclientDemo/common"
 )
 
 func TestBytesToHash(t *testing.T) {

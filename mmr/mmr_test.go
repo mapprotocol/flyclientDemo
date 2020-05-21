@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/marcopoloprotocol/flyclientDemo/common"
 	"math"
 	"testing"
+
+	"github.com/marcopoloprotocol/flyclientDemo/common"
 )
 
 func IntToBytes(n int) []byte {

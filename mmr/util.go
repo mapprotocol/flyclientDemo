@@ -2,11 +2,12 @@ package mmr
 
 import (
 	"encoding/binary"
-	"github.com/marcopoloprotocol/flyclientDemo/common"
 	"math"
 	"math/big"
 	"math/bits"
 	"sort"
+
+	"github.com/marcopoloprotocol/flyclientDemo/common"
 )
 
 func countZore(num uint64) int {

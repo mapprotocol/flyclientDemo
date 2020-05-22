@@ -11,7 +11,6 @@ import (
 
 	"github.com/marcopoloprotocol/flyclientDemo/common"
 	"github.com/marcopoloprotocol/flyclientDemo/rlp"
-
 	"golang.org/x/crypto/sha3"
 )
 
@@ -25,7 +24,6 @@ func BytesToHash(b []byte) common.Hash {
 	a.SetBytes(b)
 	return a
 }
-
 func RlpHash(x interface{}) (h common.Hash) {
 	hw := sha3.New256()
 	rlp.Encode(hw, x)
@@ -74,7 +72,7 @@ func (n *Node) clone() *Node {
 	}
 }
 func (n *Node) hasChildren(m *mmr) bool {
-	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.getRootNode().getIndex(), uint64(0)
+	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.getSize(), uint64(0)
 	for {
 		if curr_root_node_number > 2 {
 			leaf_number := node_to_leaf_number(curr_root_node_number)
@@ -99,7 +97,7 @@ func (n *Node) hasChildren(m *mmr) bool {
 	return false
 }
 func (n *Node) getChildren(m *mmr) (*Node, *Node) {
-	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.getRootNode().getIndex(), uint64(0)
+	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.getSize(), uint64(0)
 
 	for {
 		if curr_root_node_number > 2 {
@@ -161,41 +159,41 @@ type ProofInfo struct {
 }
 type ProofElems []*ProofElem
 
-func (p ProofElems) pop_back() *ProofElem {
-	if len(p) <= 0 {
+func (p *ProofElems) pop_back() *ProofElem {
+	if len(*p) <= 0 {
 		return nil
 	}
-	index := len(p) - 1
-	last := p[index]
-	p = append(p[:index], p[index+1:]...)
+	index := len(*p) - 1
+	last := (*p)[index]
+	*p = append((*p)[:index], (*p)[index+1:]...)
 	return last
 }
-func (p ProofElems) pop_front() *ProofElem {
-	if len(p) <= 0 {
+func (p *ProofElems) pop_front() *ProofElem {
+	if len(*p) <= 0 {
 		return nil
 	}
 	index := 0
-	last := p[index]
-	p = append(p[:index], p[index+1:]...)
+	last := (*p)[index]
+	*p = append((*p)[:index], (*p)[index+1:]...)
 	return last
 }
-func (p ProofElems) is_empty() bool {
-	return len(p) == 0
+func (p *ProofElems) is_empty() bool {
+	return len(*p) == 0
 }
 
 type VerifyElems []*VerifyElem
 
-func (v VerifyElems) pop_back() *VerifyElem {
-	if len(v) <= 0 {
+func (v *VerifyElems) pop_back() *VerifyElem {
+	if len(*v) <= 0 {
 		return nil
 	}
-	index := len(v) - 1
-	last := v[index]
-	v = append(v[:index], v[index+1:]...)
+	index := len(*v) - 1
+	last := (*v)[index]
+	*v = append((*v)[:index], (*v)[index+1:]...)
 	return last
 }
-func (v VerifyElems) is_empty() bool {
-	return len(v) == 0
+func (v *VerifyElems) is_empty() bool {
+	return len(*v) == 0
 }
 
 type ProofBlock struct {
@@ -212,24 +210,39 @@ func (p *ProofBlock) equal(oth *ProofBlock) bool {
 
 type ProofBlocks []*ProofBlock
 
-func (p ProofBlocks) pop() *ProofBlock {
-	if len(p) <= 0 {
+func (p *ProofBlocks) pop() *ProofBlock {
+	if len(*p) <= 0 {
 		return nil
 	}
-	index := len(p) - 1
-	last := p[index]
-	p = append(p[:index], p[index+1:]...)
+	index := len(*p) - 1
+	last := (*p)[index]
+	*p = append((*p)[:index], (*p)[index+1:]...)
 	return last
 }
 func (a ProofBlocks) Len() int           { return len(a) }
 func (a ProofBlocks) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ProofBlocks) Less(i, j int) bool { return a[i].Number < a[j].Number }
 
+type elemNodes []*Node
+
+func (p *elemNodes) pop() *Node {
+	if len(*p) <= 0 {
+		return nil
+	}
+	index := len(*p) - 1
+	last := (*p)[index]
+	*p = append((*p)[:index], (*p)[index+1:]...)
+	return last
+}
+func (p *elemNodes) push(n *Node) {
+	*p = append(*p, n)
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 type mmr struct {
 	values  []*Node
-	curSize uint64
+	curSize uint64 // unused
 	leafNum uint64
 }
 
@@ -241,7 +254,7 @@ func NewMMR() *mmr {
 	}
 }
 func (m *mmr) getNode(pos uint64) *Node {
-	if pos > m.curSize-1 {
+	if int(pos) > int(len(m.values)-1) {
 		return nil
 	}
 	return m.values[pos]
@@ -249,93 +262,81 @@ func (m *mmr) getNode(pos uint64) *Node {
 func (m *mmr) getLeafNumber() uint64 {
 	return m.leafNum
 }
-func (m *mmr) push(n *Node) *Node {
-	height, pos := 0, m.curSize
-	n.index = pos
-	m.values = append(m.values, n)
-	m.leafNum++
-	for {
-		if pos_height_in_tree(pos+1) > height {
-			pos++
-			// calculate pos of left child and right child
-			left_pos := pos - parent_offset(height)
-			right_pos := left_pos + sibling_offset(height)
-			left, right := m.values[left_pos], m.values[right_pos]
-			parent := merge(left, right)
-			// for test
-			if parent.getIndex() != pos {
-				panic("index not match")
-			}
-			parent.setIndex(pos)
-			m.values = append(m.values, parent)
-			height++
-		} else {
-			break
-		}
-	}
-	m.curSize = pos + 1
-	return n
-}
-func (m *mmr) getRoot() common.Hash {
-	if m.curSize == 0 {
-		return common.Hash{0}
-	}
-	if m.curSize == 1 {
-		return m.values[0].getHash()
-	}
-	rootNode := m.bagRHSPeaks(0, get_peaks(m.curSize))
-	if rootNode != nil {
-		return rootNode.getHash()
+
+func (m *mmr) push(newElem *Node) {
+	if len(m.values) <= 0 {
+		m.values, m.leafNum, m.curSize = append(m.values, newElem), 1, 1
+		newElem.index = 0
 	} else {
-		return common.Hash{0}
+		nodes_to_hash, curr_tree_number, aggr_node_number := elemNodes(make([]*Node, 0, 0)), m.leafNum, uint64(0)
+
+		for {
+			if !IsPowerOfTwo(curr_tree_number) {
+				m.removeLastElem()
+				left_tree_number := NextPowerOfTwo(curr_tree_number) / 2
+				aggr_node_number += left_tree_number
+				right_tree_number := curr_tree_number - left_tree_number
+
+				left_root_node_number := GetNodeFromLeaf(aggr_node_number) - 1
+				nodes_to_hash.push(m.getNode(left_root_node_number))
+				curr_tree_number = right_tree_number
+			} else {
+				break
+			}
+		}
+		nodes_to_hash.push(m.getRootNode())
+		m.values = append(m.values, newElem)
+		newElem.index = uint64(len(m.values) - 1)
+		nodes_to_hash.push(newElem)
+
+		for {
+			if len(nodes_to_hash) > 1 {
+				right := nodes_to_hash.pop()
+				left := nodes_to_hash.pop()
+				parent := merge(left, right)
+				m.values = append(m.values, parent)
+				parent.index = uint64(len(m.values) - 1)
+				nodes_to_hash.push(parent)
+			} else {
+				break
+			}
+		}
+		m.leafNum += 1
 	}
+}
+func (m *mmr) removeLastElem() {
+	if len(m.values) <= 0 {
+		return
+	}
+	index := len(m.values) - 1
+	m.values = append(m.values[:index], m.values[index+1:]...)
+	return
 }
 func (m *mmr) getRootNode() *Node {
-	if m.curSize == 1 {
-		return m.values[0]
-	}
-	return m.bagRHSPeaks(0, get_peaks(m.curSize))
-}
-func (m *mmr) getRootDifficulty() *big.Int {
-	if m.curSize == 0 {
+	if len(m.values) <= 0 {
 		return nil
 	}
-	if m.curSize == 1 {
-		return m.values[0].getDifficulty()
-	}
-	rootNode := m.bagRHSPeaks(0, get_peaks(m.curSize))
-	if rootNode != nil {
-		return rootNode.getDifficulty()
-	}
-	return nil
+	return m.values[len(m.values)-1]
 }
-func (m *mmr) bagRHSPeaks(pos uint64, peaks []uint64) *Node {
-	rhsPeakNodes := make([]*Node, 0, 0)
-	for _, v := range peaks {
-		if v > pos {
-			rhsPeakNodes = append(rhsPeakNodes, m.values[v])
-		}
+func (m *mmr) getRoot() common.Hash {
+	root := m.getRootNode()
+	if root == nil {
+		return common.Hash{0}
+	} else {
+		return root.getHash()
 	}
-	for {
-		if len(rhsPeakNodes) <= 1 {
-			break
-		}
-		last := len(rhsPeakNodes) - 1
-		right := rhsPeakNodes[last]
-		rhsPeakNodes = rhsPeakNodes[:last]
-		last = len(rhsPeakNodes) - 1
-		left := rhsPeakNodes[last]
-		rhsPeakNodes = rhsPeakNodes[:last]
-		parent := merge(right, left)
-		parent.setIndex(right.getIndex() + 1)
-		rhsPeakNodes = append(rhsPeakNodes, parent)
-	}
-	if len(rhsPeakNodes) == 1 {
-		return rhsPeakNodes[0]
-	}
-	return nil
 }
-
+func (m *mmr) getSize() uint64 {
+	return uint64(len(m.values))
+}
+func (m *mmr) getRootDifficulty() *big.Int {
+	root := m.getRootNode()
+	if root == nil {
+		return nil
+	} else {
+		return root.getDifficulty()
+	}
+}
 func (m *mmr) getChildByAggrWeightDisc(weight *big.Int) uint64 {
 	AggrWeight, aggr_node_number, curr_tree_number := big.NewInt(0), uint64(0), m.leafNum
 	for {
@@ -525,7 +526,7 @@ func get_root(nodes []*VerifyElem) (common.Hash, *big.Int) {
 	}
 	tmp_nodes := VerifyElems(tmp)
 	for {
-		if len(tmp) > 1 {
+		if len(tmp_nodes) > 1 {
 			node2 := tmp_nodes.pop_back()
 			node1 := tmp_nodes.pop_back()
 			hash := merge2(node1.Res.h, node2.Res.h)

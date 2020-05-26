@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math"
 	"math/big"
-	"strings"
 	"testing"
 
 	"github.com/marcopoloprotocol/flyclientDemo/common"
@@ -17,26 +16,6 @@ func IntToBytes(n int) []byte {
 	bytebuf := bytes.NewBuffer([]byte{})
 	binary.Write(bytebuf, binary.BigEndian, data)
 	return bytebuf.Bytes()
-}
-func (r *proofRes) String() string {
-	return fmt.Sprintf("{hash:%s, td:%v}", r.h.Hex(), r.td)
-}
-func (p *ProofElem) String() string {
-	if p.Cat == 2 {
-		return fmt.Sprintf("[Child,%s]", p.Res.String())
-	} else if p.Cat == 1 {
-		return fmt.Sprintf("[Node,%s,Right:%v]", p.Res.String(), p.Right)
-	} else {
-		return fmt.Sprintf("[Root,%s,LeafNum:%v]", p.Res.String(), p.LeafNum)
-	}
-}
-func (p *ProofInfo) String() string {
-	elems := make([]string, len(p.Elems))
-	for i, v := range p.Elems {
-		elems[i] = v.String()
-	}
-	return fmt.Sprintf("RootHash:%s \n,RootDiff:%v,LeafNum:%v \n,Elems:%s", p.RootHash.Hex(),
-		p.RootDifficulty, p.LeafNumber, strings.Join(elems, "\n "))
 }
 
 //func run_Mmr(count int, proof_pos uint64) {

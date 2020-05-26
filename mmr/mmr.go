@@ -3,6 +3,7 @@ package mmr
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"errors"
 	"math"
@@ -132,6 +133,29 @@ func (n *Node) getChildren(m *mmr) (*Node, *Node) {
 	}
 
 	panic("This node has no children!")
+}
+func (n *Node) String() string {
+	return fmt.Sprintf("{value:%s, index:%v,difficulty:%v}", n.value.Hex(), n.index, n.difficulty)
+}
+func (r *proofRes) String() string {
+	return fmt.Sprintf("{hash:%s, td:%v}", r.h.Hex(), r.td)
+}
+func (p *ProofElem) String() string {
+	if p.Cat == 2 {
+		return fmt.Sprintf("[Child,%s]", p.Res.String())
+	} else if p.Cat == 1 {
+		return fmt.Sprintf("[Node,%s,Right:%v]", p.Res.String(), p.Right)
+	} else {
+		return fmt.Sprintf("[Root,%s,LeafNum:%v]", p.Res.String(), p.LeafNum)
+	}
+}
+func (p *ProofInfo) String() string {
+	elems := make([]string, len(p.Elems))
+	for i, v := range p.Elems {
+		elems[i] = v.String()
+	}
+	return fmt.Sprintf("RootHash:%s \n,RootDiff:%v,LeafNum:%v \n,Elems:%s", p.RootHash.Hex(),
+		p.RootDifficulty, p.LeafNumber, strings.Join(elems, "\n "))
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -646,7 +670,7 @@ func (p *ProofInfo) VerifyProof(blocks []*ProofBlock) bool {
 				if len(nodes) > 1 {
 					node2 := nodes.pop_back()
 					node1 := nodes.pop_back()
-					if node2.Index%2 != 1 && !proofs.is_empty() {
+					if node2.Index == math.MaxUint64 || (node2.Index%2 != 1 && !proofs.is_empty()) {
 						nodes = append(nodes, node1)
 						nodes = append(nodes, node2)
 						break
@@ -728,4 +752,12 @@ func VerifyRequiredBlocks(blocks []uint64, root_hash common.Hash, root_difficult
 		})
 	}
 	return proof_blocks, nil
+}
+func VerifyRequiredBlocks2(proofs *ProofInfo, blocks []uint64, right_difficulty *big.Int) bool {
+	pBlocks, err := VerifyRequiredBlocks(blocks, proofs.RootHash, proofs.RootDifficulty, right_difficulty, proofs.LeafNumber)
+	if err != nil {
+		return false
+	}
+	b := proofs.VerifyProof(pBlocks)
+	return b
 }

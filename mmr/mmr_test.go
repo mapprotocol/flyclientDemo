@@ -68,13 +68,13 @@ func Test03(t *testing.T) {
 func Test05(t *testing.T) {
 	mmr := NewMMR()
 	for i := 0; i < 11; i++ {
-		mmr.push(&Node{
+		mmr.Push(&Node{
 			value:      BytesToHash(IntToBytes(i)),
 			difficulty: big.NewInt(1000),
 		})
 	}
 	right_difficulty := big.NewInt(1000)
-	fmt.Println("leaf_number:", mmr.getLeafNumber(), "root_difficulty:", mmr.getRootDifficulty())
+	fmt.Println("leaf_number:", mmr.getLeafNumber(), "root_difficulty:", mmr.GetRootDifficulty())
 	proof, blocks, eblocks := mmr.CreateNewProof(right_difficulty)
 	fmt.Println("blocks_len:", len(blocks), "blocks:", blocks, "eblocks:", len(eblocks))
 	fmt.Println("proof:", proof)

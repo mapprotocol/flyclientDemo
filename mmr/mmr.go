@@ -72,8 +72,8 @@ func (n *Node) clone() *Node {
 		index:      n.index,
 	}
 }
-func (n *Node) hasChildren(m *mmr) bool {
-	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.getSize(), uint64(0)
+func (n *Node) hasChildren(m *Mmr) bool {
+	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.GetSize(), uint64(0)
 	for {
 		if curr_root_node_number > 2 {
 			leaf_number := node_to_leaf_number(curr_root_node_number)
@@ -97,8 +97,8 @@ func (n *Node) hasChildren(m *mmr) bool {
 	}
 	return false
 }
-func (n *Node) getChildren(m *mmr) (*Node, *Node) {
-	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.getSize(), uint64(0)
+func (n *Node) getChildren(m *Mmr) (*Node, *Node) {
+	elem_node_number, curr_root_node_number, aggr_node_number := n.index, m.GetSize(), uint64(0)
 
 	for {
 		if curr_root_node_number > 2 {
@@ -264,30 +264,30 @@ func (p *elemNodes) push(n *Node) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-type mmr struct {
+type Mmr struct {
 	values  []*Node
 	curSize uint64 // unused
 	leafNum uint64
 }
 
-func NewMMR() *mmr {
-	return &mmr{
+func NewMMR() *Mmr {
+	return &Mmr{
 		values:  make([]*Node, 0, 0),
 		curSize: 0,
 		leafNum: 0,
 	}
 }
-func (m *mmr) getNode(pos uint64) *Node {
+func (m *Mmr) getNode(pos uint64) *Node {
 	if int(pos) > int(len(m.values)-1) {
 		return nil
 	}
 	return m.values[pos]
 }
-func (m *mmr) getLeafNumber() uint64 {
+func (m *Mmr) getLeafNumber() uint64 {
 	return m.leafNum
 }
 
-func (m *mmr) push(newElem *Node) {
+func (m *Mmr) Push(newElem *Node) {
 	if len(m.values) <= 0 {
 		m.values, m.leafNum, m.curSize = append(m.values, newElem), 1, 1
 		newElem.index = 0
@@ -308,7 +308,7 @@ func (m *mmr) push(newElem *Node) {
 				break
 			}
 		}
-		nodes_to_hash.push(m.getRootNode())
+		nodes_to_hash.push(m.GetRootNode())
 		m.values = append(m.values, newElem)
 		newElem.index = uint64(len(m.values) - 1)
 		nodes_to_hash.push(newElem)
@@ -328,7 +328,7 @@ func (m *mmr) push(newElem *Node) {
 		m.leafNum += 1
 	}
 }
-func (m *mmr) removeLastElem() {
+func (m *Mmr) removeLastElem() {
 	if len(m.values) <= 0 {
 		return
 	}
@@ -336,32 +336,32 @@ func (m *mmr) removeLastElem() {
 	m.values = append(m.values[:index], m.values[index+1:]...)
 	return
 }
-func (m *mmr) getRootNode() *Node {
+func (m *Mmr) GetRootNode() *Node {
 	if len(m.values) <= 0 {
 		return nil
 	}
 	return m.values[len(m.values)-1]
 }
-func (m *mmr) getRoot() common.Hash {
-	root := m.getRootNode()
+func (m *Mmr) GetRoot() common.Hash {
+	root := m.GetRootNode()
 	if root == nil {
 		return common.Hash{0}
 	} else {
 		return root.getHash()
 	}
 }
-func (m *mmr) getSize() uint64 {
+func (m *Mmr) GetSize() uint64 {
 	return uint64(len(m.values))
 }
-func (m *mmr) getRootDifficulty() *big.Int {
-	root := m.getRootNode()
+func (m *Mmr) GetRootDifficulty() *big.Int {
+	root := m.GetRootNode()
 	if root == nil {
 		return nil
 	} else {
 		return root.getDifficulty()
 	}
 }
-func (m *mmr) getChildByAggrWeightDisc(weight *big.Int) uint64 {
+func (m *Mmr) GetChildByAggrWeightDisc(weight *big.Int) uint64 {
 	AggrWeight, aggr_node_number, curr_tree_number := big.NewInt(0), uint64(0), m.leafNum
 	for {
 		if curr_tree_number > 1 {
@@ -394,18 +394,29 @@ func (m *mmr) getChildByAggrWeightDisc(weight *big.Int) uint64 {
 	}
 	return aggr_node_number
 }
-func (m *mmr) getChildByAggrWeight(weight float64) uint64 {
-	root_weight := m.getRootDifficulty()
+func (m *Mmr) GetChildByAggrWeight(weight float64) uint64 {
+	root_weight := m.GetRootDifficulty()
 	v1, _ := new(big.Float).Mul(new(big.Float).SetInt(root_weight), big.NewFloat(weight)).Int64()
 	weight_disc := big.NewInt(v1)
-	return m.getChildByAggrWeightDisc(weight_disc)
+	return m.GetChildByAggrWeightDisc(weight_disc)
 }
+
+func (m *Mmr) Copy() *Mmr{
+	tmp:=NewMMR()
+	tmp.curSize=m.curSize
+	tmp.leafNum=m.leafNum
+	for _,n:=range m.values{
+		tmp.values=append(tmp.values,n.clone())
+	}
+	return tmp
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 func generateProofRecursive(currentNode *Node, blocks []uint64, proofs []*ProofElem,
 	max_left_tree_leaf_number uint64, startDepth int, leaf_number_sub_tree uint64, space uint64,
-	m *mmr) []*ProofElem {
+	m *Mmr) []*ProofElem {
 	if !currentNode.hasChildren(m) {
 		proofs = append(proofs, &ProofElem{
 			Cat:     2,
@@ -467,9 +478,9 @@ func generateProofRecursive(currentNode *Node, blocks []uint64, proofs []*ProofE
 	return proofs
 }
 
-func (m *mmr) genProof(right_difficulty *big.Int, blocks []uint64) *ProofInfo {
+func (m *Mmr) genProof(right_difficulty *big.Int, blocks []uint64) *ProofInfo {
 	blocks = SortAndRemoveRepeatForBlocks(blocks)
-	proofs, rootNode, depth := []*ProofElem{}, m.getRootNode(), get_depth(m.getLeafNumber())
+	proofs, rootNode, depth := []*ProofElem{}, m.GetRootNode(), get_depth(m.getLeafNumber())
 	max_leaf_num := uint64(math.Pow(float64(2), float64(depth-1)))
 	proofs = generateProofRecursive(rootNode, blocks, proofs, max_leaf_num, depth,
 		m.getLeafNumber(), 0, m)
@@ -484,30 +495,30 @@ func (m *mmr) genProof(right_difficulty *big.Int, blocks []uint64) *ProofInfo {
 		},
 	})
 	return &ProofInfo{
-		RootHash:       m.getRoot(),
-		RootDifficulty: m.getRootDifficulty(),
+		RootHash:       m.GetRoot(),
+		RootDifficulty: m.GetRootDifficulty(),
 		LeafNumber:     m.getLeafNumber(),
 		Elems:          proofs,
 	}
 }
 
-func (m *mmr) CreateNewProof(right_difficulty *big.Int) (*ProofInfo, []uint64, []uint64) {
-	root_hash := m.getRoot()
+func (m *Mmr) CreateNewProof(right_difficulty *big.Int) (*ProofInfo, []uint64, []uint64) {
+	root_hash := m.GetRoot()
 	r1, _ := new(big.Float).SetInt(right_difficulty).Float64()
-	r2, _ := new(big.Float).SetInt(new(big.Int).Add(m.getRootDifficulty(), right_difficulty)).Float64()
+	r2, _ := new(big.Float).SetInt(new(big.Int).Add(m.GetRootDifficulty(), right_difficulty)).Float64()
 	required_queries := uint64(vd_calculate_m(float64(lambda), c, r1, r2, m.getLeafNumber()) + 1.0)
 
 	weights, blocks := []float64{}, []uint64{}
 	for i := 0; i < int(required_queries); i++ {
 		h := RlpHash([]interface{}{root_hash, uint64(i)})
 		random := Hash_to_f64(h)
-		r3, _ := new(big.Float).SetInt(m.getRootDifficulty()).Float64()
+		r3, _ := new(big.Float).SetInt(m.GetRootDifficulty()).Float64()
 		AggrWeight := cdf(random, vd_calculate_delta(r1, r3))
 		weights = append(weights, AggrWeight)
 	}
 	sort.Float64s(weights)
 	for _, v := range weights {
-		b := m.getChildByAggrWeight(v)
+		b := m.GetChildByAggrWeight(v)
 		blocks = append(blocks, b)
 	}
 	// Pick up at specific sync point

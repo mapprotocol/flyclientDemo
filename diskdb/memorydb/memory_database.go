@@ -18,8 +18,8 @@ package memorydb
 
 import (
 	"errors"
-	"flyclientdemo/common"
-	"flyclientdemo/diskdb"
+	"github.com/marcopoloprotocol/flyclientDemo/common"
+	"github.com/marcopoloprotocol/flyclientDemo/diskdb"
 	"sort"
 	"strings"
 	"sync"

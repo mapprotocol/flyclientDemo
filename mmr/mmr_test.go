@@ -67,7 +67,7 @@ func Test03(t *testing.T) {
 
 func Test05(t *testing.T) {
 	mmr := NewMMR()
-	for i := 0; i < 11; i++ {
+	for i := 0; i < 1500; i++ {
 		mmr.Push(&Node{
 			value:      BytesToHash(IntToBytes(i)),
 			difficulty: big.NewInt(1000),
@@ -78,7 +78,7 @@ func Test05(t *testing.T) {
 	proof, blocks, eblocks := mmr.CreateNewProof(right_difficulty)
 	fmt.Println("blocks_len:", len(blocks), "blocks:", blocks, "eblocks:", len(eblocks))
 	fmt.Println("proof:", proof)
-	pBlocks, err := VerifyRequiredBlocks(blocks, proof.RootHash, proof.RootDifficulty, right_difficulty, proof.LeafNumber)
+	pBlocks, err := VerifyRequiredBlocks(proof, right_difficulty)
 	if err != nil {
 		fmt.Println("err:", err)
 		return

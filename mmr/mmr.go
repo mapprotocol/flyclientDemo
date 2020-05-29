@@ -180,6 +180,7 @@ type ProofInfo struct {
 	RootDifficulty *big.Int
 	LeafNumber     uint64
 	Elems          []*ProofElem
+	Checked        []uint64
 }
 type ProofElems []*ProofElem
 
@@ -401,16 +402,15 @@ func (m *Mmr) GetChildByAggrWeight(weight float64) uint64 {
 	return m.GetChildByAggrWeightDisc(weight_disc)
 }
 
-func (m *Mmr) Copy() *Mmr{
-	tmp:=NewMMR()
-	tmp.curSize=m.curSize
-	tmp.leafNum=m.leafNum
-	for _,n:=range m.values{
-		tmp.values=append(tmp.values,n.clone())
+func (m *Mmr) Copy() *Mmr {
+	tmp := NewMMR()
+	tmp.curSize = m.curSize
+	tmp.leafNum = m.leafNum
+	for _, n := range m.values {
+		tmp.values = append(tmp.values, n.clone())
 	}
 	return tmp
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -549,7 +549,9 @@ func (m *Mmr) CreateNewProof(right_difficulty *big.Int) (*ProofInfo, []uint64, [
 	sort.Slice(blocks, func(i, j int) bool {
 		return blocks[i] < blocks[j]
 	})
-	return m.genProof(right_difficulty, blocks), blocks, extra_blocks
+	info := m.genProof(right_difficulty, blocks)
+	info.Checked = blocks
+	return info, blocks, extra_blocks
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -710,8 +712,11 @@ func (p *ProofInfo) VerifyProof(blocks []*ProofBlock) bool {
 	}
 	return false
 }
-func VerifyRequiredBlocks(blocks []uint64, root_hash common.Hash, root_difficulty, right_difficulty *big.Int, root_leaf_number uint64) ([]*ProofBlock, error) {
-
+func VerifyRequiredBlocks(info *ProofInfo, right_difficulty *big.Int) ([]*ProofBlock, error) {
+	blocks := info.Checked
+	root_hash := info.RootHash
+	root_difficulty := info.RootDifficulty
+	root_leaf_number := info.LeafNumber
 	r1, _ := new(big.Float).SetInt(right_difficulty).Float64()
 	r2, _ := new(big.Float).SetInt(new(big.Int).Add(root_difficulty, right_difficulty)).Float64()
 	required_queries := uint64(vd_calculate_m(float64(lambda), c, r1, r2, root_leaf_number) + 1.0)
@@ -763,12 +768,4 @@ func VerifyRequiredBlocks(blocks []uint64, root_hash common.Hash, root_difficult
 		})
 	}
 	return proof_blocks, nil
-}
-func VerifyRequiredBlocks2(proofs *ProofInfo, blocks []uint64, right_difficulty *big.Int) bool {
-	pBlocks, err := VerifyRequiredBlocks(blocks, proofs.RootHash, proofs.RootDifficulty, right_difficulty, proofs.LeafNumber)
-	if err != nil {
-		return false
-	}
-	b := proofs.VerifyProof(pBlocks)
-	return b
 }

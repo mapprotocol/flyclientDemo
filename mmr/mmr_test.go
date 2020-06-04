@@ -87,3 +87,28 @@ func Test05(t *testing.T) {
 	fmt.Println("b:", b)
 	fmt.Println("finish")
 }
+
+func TestO6(t *testing.T) {
+	mmr := NewMMR()
+	for i := 0; i < 11; i++ {
+		mmr.Push(&Node{
+			value:      BytesToHash(IntToBytes(i)),
+			difficulty: big.NewInt(1000),
+		})
+	}
+	r := mmr.Pop()
+	fmt.Println("last:", r)
+	right_difficulty := big.NewInt(1000)
+	fmt.Println("leaf_number:", mmr.getLeafNumber(), "root_difficulty:", mmr.GetRootDifficulty())
+	proof, blocks, eblocks := mmr.CreateNewProof(right_difficulty)
+	fmt.Println("blocks_len:", len(blocks), "blocks:", blocks, "eblocks:", len(eblocks))
+	fmt.Println("proof:", proof)
+	pBlocks, err := VerifyRequiredBlocks(proof, right_difficulty)
+	if err != nil {
+		fmt.Println("err:", err)
+		return
+	}
+	b := proof.VerifyProof(pBlocks)
+	fmt.Println("b:", b)
+	fmt.Println("finish")
+}

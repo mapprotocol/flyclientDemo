@@ -287,6 +287,73 @@ func (m *Mmr) getNode(pos uint64) *Node {
 func (m *Mmr) getLeafNumber() uint64 {
 	return m.leafNum
 }
+func (m *Mmr) Pop() *Node {
+	if m.leafNum <= 0 {
+		return nil
+	}
+	peakNode, curr_tree_number, aggr_node_number := elemNodes(make([]*Node, 0, 0)), m.leafNum, uint64(0)
+	for !IsPowerOfTwo(curr_tree_number) {
+		m.removeLastElem()
+		left_tree_number := NextPowerOfTwo(curr_tree_number) / 2
+		aggr_node_number += left_tree_number
+		right_tree_number := curr_tree_number - left_tree_number
+
+		left_root_node_number := GetNodeFromLeaf(aggr_node_number) - 1
+		peakNode.push(m.getNode(left_root_node_number))
+		curr_tree_number = right_tree_number
+	}
+	peakNode.push(m.GetRootNode())
+	lastPeak := peakNode.pop()
+	tmp, remove := m.splitPeak(lastPeak)
+	if remove == nil {
+		return nil
+	}
+	m.removeLastLeafNode(remove)
+	peakNode = append(peakNode, tmp...)
+	for len(peakNode) > 1 {
+		right := peakNode.pop()
+		left := peakNode.pop()
+		parent := merge(left, right)
+		m.values = append(m.values, parent)
+		parent.index = uint64(len(m.values) - 1)
+		peakNode.push(parent)
+	}
+	return remove
+}
+func (m *Mmr) splitPeak(lastPeak *Node) ([]*Node, *Node) {
+	peakNodes := elemNodes(make([]*Node, 0, 0))
+	height := pos_height_in_tree(lastPeak.index)
+	if height == 0 {
+		return peakNodes, lastPeak
+	}
+	peaksize := (uint64(1) << uint64(height+1)) - 1
+	offset := lastPeak.index + 1 - peaksize
+	peaksize = peaksize - 1
+
+	for peaksize > 0 {
+		height, pos := left_peak_height_pos(peaksize)
+		if height == 0 {
+			peakNodes.push(m.getNode(pos + offset))
+			return peakNodes, m.getNode(pos + offset + 1)
+		}
+		if height > 0 {
+			leafPeak := m.getNode(pos + offset)
+			peakNodes.push(leafPeak)
+			height, pos = get_right_peak(height, pos, peaksize)
+			rightPeak := m.getNode(pos + offset)
+			peaksize = (uint64(1) << uint64(height+1)) - 1
+			offset = rightPeak.index + 1 - peaksize
+			peaksize = peaksize - 1
+		}
+	}
+	return peakNodes, nil
+}
+func (m *Mmr) removeLastLeafNode(leaf *Node) {
+	index := leaf.index
+	m.values = append(m.values[:index], m.values[index+1:]...)
+	m.leafNum = m.leafNum - 1
+	return
+}
 
 func (m *Mmr) Push(newElem *Node) {
 	if len(m.values) <= 0 {
@@ -295,36 +362,28 @@ func (m *Mmr) Push(newElem *Node) {
 	} else {
 		nodes_to_hash, curr_tree_number, aggr_node_number := elemNodes(make([]*Node, 0, 0)), m.leafNum, uint64(0)
 
-		for {
-			if !IsPowerOfTwo(curr_tree_number) {
-				m.removeLastElem()
-				left_tree_number := NextPowerOfTwo(curr_tree_number) / 2
-				aggr_node_number += left_tree_number
-				right_tree_number := curr_tree_number - left_tree_number
+		for !IsPowerOfTwo(curr_tree_number) {
+			m.removeLastElem()
+			left_tree_number := NextPowerOfTwo(curr_tree_number) / 2
+			aggr_node_number += left_tree_number
+			right_tree_number := curr_tree_number - left_tree_number
 
-				left_root_node_number := GetNodeFromLeaf(aggr_node_number) - 1
-				nodes_to_hash.push(m.getNode(left_root_node_number))
-				curr_tree_number = right_tree_number
-			} else {
-				break
-			}
+			left_root_node_number := GetNodeFromLeaf(aggr_node_number) - 1
+			nodes_to_hash.push(m.getNode(left_root_node_number))
+			curr_tree_number = right_tree_number
 		}
 		nodes_to_hash.push(m.GetRootNode())
 		m.values = append(m.values, newElem)
 		newElem.index = uint64(len(m.values) - 1)
 		nodes_to_hash.push(newElem)
 
-		for {
-			if len(nodes_to_hash) > 1 {
-				right := nodes_to_hash.pop()
-				left := nodes_to_hash.pop()
-				parent := merge(left, right)
-				m.values = append(m.values, parent)
-				parent.index = uint64(len(m.values) - 1)
-				nodes_to_hash.push(parent)
-			} else {
-				break
-			}
+		for len(nodes_to_hash) > 1 {
+			right := nodes_to_hash.pop()
+			left := nodes_to_hash.pop()
+			parent := merge(left, right)
+			m.values = append(m.values, parent)
+			parent.index = uint64(len(m.values) - 1)
+			nodes_to_hash.push(parent)
 		}
 		m.leafNum += 1
 	}
@@ -537,7 +596,7 @@ func (m *Mmr) CreateNewProof(right_difficulty *big.Int) (*ProofInfo, []uint64, [
 	added := 0
 	for {
 		if current_block > 30000 && added < 10 {
-			blocks = append(blocks, current_block)
+			// blocks = append(blocks, current_block)
 			extra_blocks = append(extra_blocks, current_block)
 			current_block -= 30000
 			added += 1
@@ -734,7 +793,7 @@ func VerifyRequiredBlocks(info *ProofInfo, right_difficulty *big.Int) ([]*ProofB
 
 	// required queries can contain the same block number multiple times
 	// TODO: maybe multiple blocks can be pruned away?
-	if required_queries != uint64(len(blocks)-len(extra_blocks)) {
+	if required_queries != uint64(len(blocks)) {
 		return nil, errors.New(fmt.Sprintf("false number of blocks provided: required: %v, got: %v", required_queries, len(blocks)))
 	}
 	weights := []float64{}
@@ -750,18 +809,20 @@ func VerifyRequiredBlocks(info *ProofInfo, right_difficulty *big.Int) ([]*ProofB
 
 	for _, v := range blocks {
 		AggrWeight := weights[weight_pos]
-		if len(extra_blocks) > 0 {
-			index := len(extra_blocks) - 1
-			curr_extra_block := extra_blocks[index]
-			if v == curr_extra_block {
-				extra_blocks = append(extra_blocks[:index], extra_blocks[index+1:]...)
-				AggrWeight = 0 // 0--none
-			} else {
-				weight_pos++
-			}
-		} else {
-			weight_pos++
-		}
+		// if len(extra_blocks) > 0 {
+		// 	index := len(extra_blocks) - 1
+		// 	curr_extra_block := extra_blocks[index]
+		// 	if v == curr_extra_block {
+		// 		extra_blocks = append(extra_blocks[:index], extra_blocks[index+1:]...)
+		// 		AggrWeight = 0 // 0--none
+		// 	} else {
+		// 		weight_pos++
+		// 	}
+		// } else {
+		// 	weight_pos++
+		// }
+		AggrWeight = weights[weight_pos]
+		weight_pos++
 		proof_blocks = append(proof_blocks, &ProofBlock{
 			Number:     v,
 			AggrWeight: AggrWeight,

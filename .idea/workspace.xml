@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="84ebfe18-8146-4189-97f7-841ff7bc14e2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/zksnark.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/zksnark_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/block.go" beforeDir="false" afterPath="$PROJECT_DIR$/block.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/block_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/block_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diskdb/memorydb/memory_database.go" beforeDir="false" afterPath="$PROJECT_DIR$/diskdb/memorydb/memory_database.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmr/mmr.go" beforeDir="false" afterPath="$PROJECT_DIR$/mmr/mmr.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mmr/mmr_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/mmr/mmr_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,9 +28,9 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../PvssDemo" />
   </component>
-  <component name="RunManager" selected="Go Test.Test05 in github.com/marcopoloprotocol/flyclientDemo/mmr">
+  <component name="RunManager" selected="Go Test.TestBlockChain_GetProof in github.com/marcopoloprotocol/flyclientDemo">
     <configuration name="BenchmarkUnmarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="flyclientDemo" />
       <working_directory value="$PROJECT_DIR$/common/hexutil" />
@@ -88,8 +82,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.Test05 in github.com/marcopoloprotocol/flyclientDemo/mmr" />
         <item itemvalue="Go Test.TestBlockChain_GetProof in github.com/marcopoloprotocol/flyclientDemo" />
+        <item itemvalue="Go Test.Test05 in github.com/marcopoloprotocol/flyclientDemo/mmr" />
         <item itemvalue="Go Test.TestMarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
         <item itemvalue="Go Test.BenchmarkUnmarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
         <item itemvalue="Go Test.TestUnmarshalBytes in github.com/marcopoloprotocol/flyclientDemo/common/hexutil" />
@@ -116,26 +110,30 @@
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="649" y="156" width="679" height="793" key="#TestUnmarshalBytes_in_github.com/marcopoloprotocol/flyclientDemo/common/hexutil/67.27.1853.1053@67.27.1853.1053" timestamp="1589447955349" />
+    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl" timestamp="1591172784119">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1591172784119" />
     <state x="67" y="213" width="1843" height="679" key="FileDocumentManager.FileCacheConflict" timestamp="1589447735592">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="67" y="213" width="1843" height="679" key="FileDocumentManager.FileCacheConflict/67.27.1853.1053@67.27.1853.1053" timestamp="1589447735592" />
-    <state width="1807" height="312" key="GridCell.Tab.0.bottom" timestamp="1590742946865">
+    <state width="1807" height="330" key="GridCell.Tab.0.bottom" timestamp="1591172353999">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1807" height="312" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1590742946865" />
-    <state width="1807" height="312" key="GridCell.Tab.0.center" timestamp="1590742946865">
+    <state width="1807" height="330" key="GridCell.Tab.0.bottom/67.27.1853.1053@67.27.1853.1053" timestamp="1591172353999" />
+    <state width="1807" height="330" key="GridCell.Tab.0.center" timestamp="1591172353999">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1807" height="312" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1590742946865" />
-    <state width="1807" height="312" key="GridCell.Tab.0.left" timestamp="1590742946864">
+    <state width="1807" height="330" key="GridCell.Tab.0.center/67.27.1853.1053@67.27.1853.1053" timestamp="1591172353999" />
+    <state width="1807" height="330" key="GridCell.Tab.0.left" timestamp="1591172353998">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1807" height="312" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1590742946864" />
-    <state width="1807" height="312" key="GridCell.Tab.0.right" timestamp="1590742946865">
+    <state width="1807" height="330" key="GridCell.Tab.0.left/67.27.1853.1053@67.27.1853.1053" timestamp="1591172353998" />
+    <state width="1807" height="330" key="GridCell.Tab.0.right" timestamp="1591172353999">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
-    <state width="1807" height="312" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1590742946865" />
+    <state width="1807" height="330" key="GridCell.Tab.0.right/67.27.1853.1053@67.27.1853.1053" timestamp="1591172353999" />
     <state x="684" y="291" width="618" height="522" key="find.popup" timestamp="1589447543018">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>

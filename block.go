@@ -53,7 +53,6 @@ type BlockChain struct {
 	header    *Block
 	db        diskdb.Database
 	Mmr       *mmr.Mmr
-	MmrBackup *mmr.Mmr
 }
 
 var genesisBlock = &Block{
@@ -70,7 +69,6 @@ func NewBlockChain() (bc *BlockChain) {
 		genesis: genesisBlock,
 		blocks:  []*Block{genesisBlock},
 		Mmr:     mmr.NewMMR(),
-		MmrBackup: mmr.NewMMR(),
 		db:      getDB(),
 	}
 	node := mmr.NewNode(genesisBlock.Hash(), big.NewInt(0))
@@ -87,7 +85,6 @@ func (bc *BlockChain) InsertBlock(b *Block) error {
 	}
 
 	b.PreHash = bc.header.Hash()
-	bc.MmrBackup=bc.Mmr.Copy()
 
 	b.MRoot = bc.Mmr.GetRoot()
 
@@ -110,7 +107,9 @@ func (bc *BlockChain) Len() int {
 }
 
 func (bc *BlockChain) GetTailMmr() *mmr.Mmr {
-	return bc.MmrBackup
+	m:=bc.Mmr.Copy()
+	m.Pop()
+	return m
 }
 
 func (bc *BlockChain) GetProof() *mmr.ProofInfo {

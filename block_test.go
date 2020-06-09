@@ -11,19 +11,25 @@ import (
 
 func TestBlockChain_GetProof(t *testing.T) {
 	bc := NewBlockChain()
-	length := 10000
+	length := 500000
 
 	for i := 0; i < length; i++ {
 		b := NewBlock(uint64(i), 2,big.NewInt(10000))
 		bc.InsertBlock(b)
 	}
+
 	start:=time.Now()
 	proof:=bc.GetProof()
+	fmt.Println(len(proof.Elems))
+
+
 	fmt.Println("gen proof cost:",time.Now().Sub(start))
 	start=time.Now()
 	pBlocks, err := mmr.VerifyRequiredBlocks(proof,RightDif)
 	assert.NoError(t,err)
 	assert.True(t,proof.VerifyProof(pBlocks))
+
+
 	fmt.Println("verify cost:", time.Now().Sub(start))
 
 	//var wg sync.WaitGroup

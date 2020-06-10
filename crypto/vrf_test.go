@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"fmt"
+	"github.com/marcopoloprotocol/flyclientDemo/common/hexutil"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -13,8 +14,8 @@ func TestEvaluate(t *testing.T) {
 	assert.NoError(t, err1)
 	seed := []byte{1, 2}
 	vrf, nizk, err := VRFProve(key1, seed)
-	fmt.Println(vrf)
-	fmt.Println(nizk)
+	fmt.Println(hexutil.Encode(vrf[:]) )
+	fmt.Println(hexutil.Encode(nizk[:]) )
 	fmt.Println(err)
 
 	res := append(nizk, vrf...)

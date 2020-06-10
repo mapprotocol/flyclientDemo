@@ -48,11 +48,11 @@ ____________________________________________________________
 }
 
 type BlockChain struct {
-	genesis   *Block
-	blocks    []*Block
-	header    *Block
-	db        diskdb.Database
-	Mmr       *mmr.Mmr
+	genesis *Block
+	blocks  []*Block
+	header  *Block
+	db      diskdb.Database
+	Mmr     *mmr.Mmr
 }
 
 var genesisBlock = &Block{
@@ -107,14 +107,14 @@ func (bc *BlockChain) Len() int {
 }
 
 func (bc *BlockChain) GetTailMmr() *mmr.Mmr {
-	m:=bc.Mmr.Copy()
+	m := bc.Mmr.Copy()
 	m.Pop()
 	return m
 }
 
 func (bc *BlockChain) GetProof() *mmr.ProofInfo {
-	m:=bc.GetTailMmr()
+	m := bc.GetTailMmr()
 
-	res,_,_:=m.CreateNewProof(RightDif)
+	res, _, _ := m.CreateNewProof(RightDif)
 	return res
 }

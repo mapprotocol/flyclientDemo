@@ -6,6 +6,7 @@ replace golang.org/x/crypto => github.com/golang/crypto v0.0.0-20200429183012-4b
 
 require (
 	github.com/aristanetworks/goarista v0.0.0-20200513152637-638451432ae4
+	github.com/arnaucube/go-snark v0.0.4
 	github.com/dchest/siphash v1.2.1
 	github.com/go-stack/stack v1.8.0
 	github.com/influxdata/influxdb v1.8.0
